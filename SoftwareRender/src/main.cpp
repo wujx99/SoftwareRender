@@ -99,16 +99,18 @@ void filledtriangle(Vec2i v0, Vec2i v1, Vec2i v2, TGAImage& image, TGAColor colo
 		for (int y = bottom.y; y <= top.y; y++) {
 			int start_x = calcCorrespondX(bottom, left, y);
 			int end_x = calcCorrespondX(bottom, right, y);
-			Vec2i start = { start_x, y }, end = { end_x, y };
-			line(start, end, image, color);
+			for (int x = start_x; x < end_x; x++) {
+				image.set(x, y, color);
+			}
 		}
 		break;
 	case TriangleType::BOTTOM_FLAT:
 		for (int y = bottom.y; y <= top.y; y++) {
 			int start_x = std::min(calcCorrespondX(bottom, left, y), calcCorrespondX(left, right, y));
-			int end_x = std::max(calcCorrespondX(bottom, left, y), calcCorrespondX(left, right, y));
-			Vec2i start = { start_x, y }, end = { end_x, y };
-			line(start, end, image, color);
+			int end_x = std::min(calcCorrespondX(bottom, left, y), calcCorrespondX(left, right, y));
+			for (int x = start_x; x < end_x; x++) {
+				image.set(x, y, color);
+			}
 		}
 		break;
 	case TriangleType::LEFT_SHORT:
@@ -124,7 +126,9 @@ void filledtriangle(Vec2i v0, Vec2i v1, Vec2i v2, TGAImage& image, TGAColor colo
 			}
 			
 			Vec2i start = { start_x, y }, end = { end_x, y };
-			line(start, end, image, color);
+			for (int x = start_x; x < end_x; x++) {
+				image.set(x, y, color);
+			}
 		}
 		break;
 	case TriangleType::RIGHT_SHORT:
@@ -139,8 +143,9 @@ void filledtriangle(Vec2i v0, Vec2i v1, Vec2i v2, TGAImage& image, TGAColor colo
 				end_x = calcCorrespondX(right, top, y);
 			}
 
-			Vec2i start = { start_x, y }, end = { end_x, y };
-			line(start, end, image, color);
+			for (int x = start_x; x < end_x; x++) {
+				image.set(x, y, color);
+			}
 		}
 		break;
 	default:
