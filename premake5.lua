@@ -34,8 +34,8 @@ project "SoftwareRender"
 
 	includedirs
 	{
+		"%{prj.name}/src",
 		"vendor/spdlog/include",
-		"src",
 	}
 
 	

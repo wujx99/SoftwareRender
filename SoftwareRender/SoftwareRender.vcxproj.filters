@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="tests">
+      <UniqueIdentifier>{78756B10-E489-93C1-AD0B-372119DF8FF2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Core.h" />
+    <ClInclude Include="src\Log.h" />
+    <ClInclude Include="src\Tools.h" />
+    <ClInclude Include="src\geometry.h" />
+    <ClInclude Include="src\model.h" />
+    <ClInclude Include="src\tests\TestTools.h">
+      <Filter>tests</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tgaimage.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Log.cpp" />
+    <ClCompile Include="src\Tools.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\model.cpp" />
+    <ClCompile Include="src\tests\TestTools.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tgaimage.cpp" />
+  </ItemGroup>
+</Project>
