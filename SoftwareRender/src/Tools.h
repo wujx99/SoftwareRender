@@ -19,5 +19,7 @@ public:
 	static void triangle(const std::array<Vec3f, 3>& pts,
 		std::vector<float>& zbuffer, TGAImage& image, TGAColor color);
 	static Vec3f world2screen(Vec3f v, int width, int height);
+	static void triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffer,
+		TGAImage& image, const std::array<Vec2f, 3>& texCoord, TGAImage& texture);
 };
 
