@@ -17,6 +17,8 @@ public:
 	static Vec3f V4f_to_V3f(Vec4f v);
 	static Vec4f V3f_to_V4f(Vec3f v, float value);
 
+	static Matrix ULookUp(Vec3f center, Vec3f eye, Vec3f up);
+
 	static void Line(Vec2i p0, Vec2i p1, TGAImage& image, TGAColor color);
 	static void Triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage& image, TGAColor color);
 	static void Triangle(const std::array<Vec3f, 3>& pts,

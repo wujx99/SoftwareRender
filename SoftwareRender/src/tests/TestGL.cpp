@@ -19,4 +19,13 @@ namespace test
 			<< ret.z << " " << std::endl;
 		ASSERT(ret.x == 0.25f && ret.y == 0.25f && ret.z == 0.5f)
 	}
+
+	void TestGL::TestULooKUp()
+	{
+		Vec3f center{ 0.f, 0.f, .5f }, eye{ 0.f, 0.f, 1.f }, up{ 0.f, 1.f, 0.f };
+		Vec3f position{ 0.f, 0.f, 5.f };
+		auto transform = GL::ULookUp(center, eye, up);
+		auto tPos = transform * GL::V3f_to_V4f(position, 1);
+		std::cout << "transformed Positon:" << tPos << std::endl;
+	}
 }

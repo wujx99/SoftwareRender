@@ -36,6 +36,24 @@ Vec4f GL::V3f_to_V4f(Vec3f v, float value)
     return ret;
 }
 
+Matrix GL::ULookUp(Vec3f center, Vec3f eye, Vec3f up)
+{
+    Vec3f k = (eye - center).normalize();
+    Vec3f j = up.normalize();
+    Vec3f i = cross(j, k).normalize();
+
+    mat<3, 3, float> M;
+    M.set_col(0, i); M.set_col(1, j); M.set_col(2, k);
+
+    auto M_inv = M.invert();
+    Matrix ret;
+    ret.set_col(0, GL::V3f_to_V4f(M_inv.col(0), 0));
+    ret.set_col(1, GL::V3f_to_V4f(M_inv.col(1), 0));
+    ret.set_col(2, GL::V3f_to_V4f(M_inv.col(2), 0));
+    ret.set_col(3, GL::V3f_to_V4f(center * -1, 1));
+
+    return ret;
+}
 
 void GL::Line(Vec2i p0, Vec2i p1, TGAImage& image, TGAColor color) {
     bool steep = false;

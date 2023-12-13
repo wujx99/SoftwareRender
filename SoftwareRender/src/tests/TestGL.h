@@ -11,6 +11,7 @@ namespace test
 		~TestGL();
 
 		static void TestBaryCentric();
+		static void TestULooKUp();
 
 	};
 
