@@ -4,11 +4,11 @@
 
 namespace test
 {
-	class TestTools
+	class TestGL
 	{
 	public:
-		TestTools();
-		~TestTools();
+		TestGL();
+		~TestGL();
 
 		static void TestBaryCentric();
 

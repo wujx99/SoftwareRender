@@ -1,19 +1,19 @@
-#include "TestTools.h"
-#include "Tools.h"
+#include "TestGL.h"
+#include "GL.h"
 
 namespace test
 {
-	TestTools::TestTools()
+	TestGL::TestGL()
 	{
 	}
 
-	TestTools::~TestTools()
+	TestGL::~TestGL()
 	{
 	}
-	void TestTools::TestBaryCentric()
+	void TestGL::TestBaryCentric()
 	{
 		Vec3f A{ 1.0, 1.0, 0.0 }, B{ 3.0, 1.0, 0.0 }, C{ 2.0, 3.0, 0.0 }, P{ 2.0, 2.0, 0.0 };
-		auto ret = Tools::BaryCentric(A, B, C, P);
+		auto ret = GL::BaryCentric(A, B, C, P);
 		std::cout << ret.x << " "
 			<< ret.y << " "
 			<< ret.z << " " << std::endl;

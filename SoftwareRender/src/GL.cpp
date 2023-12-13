@@ -1,8 +1,8 @@
-#include "Tools.h"
+#include "GL.h"
 
 
 
-Vec3f Tools::BaryCentric(Vec3f A, Vec3f B, Vec3f C, Vec3f P) {
+Vec3f GL::BaryCentric(Vec3f A, Vec3f B, Vec3f C, Vec3f P) {
     Vec3f AB = B - A, AC = C - A, PA = A - P;
     Vec3f vec1{ AB.x, AC.x ,PA.x }, vec2{ AB.y, AC.y, PA.y };
     Vec3f uv = cross(vec1, vec2);
@@ -11,7 +11,33 @@ Vec3f Tools::BaryCentric(Vec3f A, Vec3f B, Vec3f C, Vec3f P) {
     return {-1, 1, 1};
 }
 
-void Tools::line(Vec2i p0, Vec2i p1, TGAImage& image, TGAColor color) {
+Matrix GL::ViewPort(int x, int y, int w, int h, int depth) {
+    Matrix m = Matrix::identity();
+    m[0][3] = x + w / 2.f;
+    m[1][3] = y + h / 2.f;
+    m[2][3] = depth / 2.f;
+
+    m[0][0] = w / 2.f;
+    m[1][1] = h / 2.f;
+    m[2][2] = depth / 2.f;
+    return m;
+}
+
+Vec3f GL::V4f_to_V3f(Vec4f v) {
+    return { v[0] / v[3], v[1] / v[3],v[2] / v[3] };
+}
+Vec4f GL::V3f_to_V4f(Vec3f v, float value)
+{
+    Vec4f ret;
+    ret[0] = v.x;
+    ret[1] = v.y;
+    ret[2] = v.z;
+    ret[3] = value;
+    return ret;
+}
+
+
+void GL::Line(Vec2i p0, Vec2i p1, TGAImage& image, TGAColor color) {
     bool steep = false;
     if (std::abs(p0.x - p1.x) < std::abs(p0.y - p1.y)) {
         std::swap(p0.x, p0.y);
@@ -34,7 +60,7 @@ void Tools::line(Vec2i p0, Vec2i p1, TGAImage& image, TGAColor color) {
     }
 }
 
-void Tools::triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage& image, TGAColor color) {
+void GL::Triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage& image, TGAColor color) {
     if (t0.y == t1.y && t0.y == t2.y) return; // i dont care about degenerate triangles
     if (t0.y > t1.y) std::swap(t0, t1);
     if (t0.y > t2.y) std::swap(t0, t2);
@@ -55,12 +81,12 @@ void Tools::triangle(Vec2i t0, Vec2i t1, Vec2i t2, TGAImage& image, TGAColor col
 }
 
 
-Vec3f Tools::world2screen(Vec3f v, int width, int height) {
+Vec3f GL::World2Screen(Vec3f v, int width, int height) {
     Vec3f ret = Vec3f(int((v.x + 1.) * width / 2. + .5), int((v.y + 1.) * height / 2. + .5), v.z);
     return ret;
 }
 
-void Tools::triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffer, TGAImage& image, TGAColor color) {
+void GL::Triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffer, TGAImage& image, TGAColor color) {
    
     const int width = image.get_width(), height = image.get_height();
     Vec2f bboxmin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
@@ -75,7 +101,7 @@ void Tools::triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffe
     Vec3f p;
     for (p.x = bboxmin.x; p.x < bboxmax.x; p.x++) {
         for (p.y = bboxmin.y; p.y < bboxmax.y; p.y++) {
-            auto barycoord = Tools::BaryCentric(pts[0], pts[1], pts[2], p);
+            auto barycoord = GL::BaryCentric(pts[0], pts[1], pts[2], p);
             //std::cout << barycoord << "barycoord" << std::endl;
 
             if (barycoord.x < 0 || barycoord.y < 0 || barycoord.z < 0) continue;
@@ -92,8 +118,8 @@ void Tools::triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffe
     }
 }
 
-void Tools::triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffer,
-    TGAImage& image, const std::array<Vec2f, 3>& texCoord, TGAImage& texture)
+void GL::Triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffer,
+    TGAImage& image, const std::array<Vec2f, 3>& texCoord, TGAImage& texture, float intensity)
 {
     const int width = image.get_width(), height = image.get_height();
     Vec2f bboxmin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
@@ -108,7 +134,7 @@ void Tools::triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffe
     Vec3f p;
     for (p.x = bboxmin.x; p.x < bboxmax.x; p.x++) {
         for (p.y = bboxmin.y; p.y < bboxmax.y; p.y++) {
-            auto barycoord = Tools::BaryCentric(pts[0], pts[1], pts[2], p);
+            auto barycoord = GL::BaryCentric(pts[0], pts[1], pts[2], p);
             if (barycoord.x < 0 || barycoord.y < 0 || barycoord.z < 0) continue;
             Vec2f pTexCoord = { 0.f, 0.f };
             p.z = 0;
@@ -121,9 +147,10 @@ void Tools::triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffe
                 zbuffer[int(p.x + p.y * width)] = p.z;
 
                 TGAColor color = texture.get(int(pTexCoord.x * texture.get_width()), int(pTexCoord.y * texture.get_height()));
-                image.set(p.x, p.y, color);
+                image.set(p.x, p.y, color * intensity);
             }
 
         }
     }
 }
+

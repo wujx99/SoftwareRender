@@ -21,11 +21,19 @@ struct TGA_Header {
 #pragma pack(pop)
 
 struct TGAColor {
-    unsigned char bgra[4];
+    union 
+    {
+        unsigned char bgra[4];
+        unsigned int val;
+    };
+    
     unsigned char bytespp;
 
     TGAColor() : bgra(), bytespp(1) {
         for (int i = 0; i < 4; i++) bgra[i] = 0;
+    }
+
+    TGAColor(int v, int bpp) : val(v), bytespp(bpp) {
     }
 
     TGAColor(unsigned char R, unsigned char G, unsigned char B, unsigned char A = 255) : bgra(), bytespp(4) {

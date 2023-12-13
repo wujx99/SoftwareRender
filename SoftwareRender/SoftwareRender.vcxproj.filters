@@ -8,20 +8,20 @@
   <ItemGroup>
     <ClInclude Include="src\Core.h" />
     <ClInclude Include="src\Log.h" />
-    <ClInclude Include="src\Tools.h" />
+    <ClInclude Include="src\GL.h" />
     <ClInclude Include="src\geometry.h" />
     <ClInclude Include="src\model.h" />
-    <ClInclude Include="src\tests\TestTools.h">
+    <ClInclude Include="src\tests\TestGL.h">
       <Filter>tests</Filter>
     </ClInclude>
     <ClInclude Include="src\tgaimage.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Log.cpp" />
-    <ClCompile Include="src\Tools.cpp" />
+    <ClCompile Include="src\GL.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\model.cpp" />
-    <ClCompile Include="src\tests\TestTools.cpp">
+    <ClCompile Include="src\tests\TestGL.cpp">
       <Filter>tests</Filter>
     </ClCompile>
     <ClCompile Include="src\tgaimage.cpp" />
