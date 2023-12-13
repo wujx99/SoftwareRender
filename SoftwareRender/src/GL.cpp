@@ -172,3 +172,41 @@ void GL::Triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffer,
     }
 }
 
+void GL::Triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffer,
+    TGAImage& image, const std::array<Vec2f, 3>& texCoord, TGAImage& texture, std::array<float,3> vertex_intensity)
+{
+    const int width = image.get_width(), height = image.get_height();
+    Vec2f bboxmin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+    Vec2f bboxmax(-std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
+    Vec2f clamp(image.get_width() - 1, image.get_height() - 1);
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 2; j++) {
+            bboxmin[j] = std::max(0.f, std::min(bboxmin[j], pts[i][j]));
+            bboxmax[j] = std::min(clamp[j], std::max(bboxmax[j], pts[i][j]));
+        }
+    }
+    Vec3f p;
+    for (p.x = bboxmin.x; p.x < bboxmax.x; p.x++) {
+        for (p.y = bboxmin.y; p.y < bboxmax.y; p.y++) {
+            auto barycoord = GL::BaryCentric(pts[0], pts[1], pts[2], p);
+            if (barycoord.x < 0 || barycoord.y < 0 || barycoord.z < 0) continue;
+            Vec2f pTexCoord = { 0.f, 0.f };
+            p.z = 0;
+            float intensity = 0.f;
+            for (int i = 0; i < 3; i++)
+            {
+                p.z += barycoord[i] * pts[i].z;
+                pTexCoord = pTexCoord + texCoord[i] * barycoord[i];
+                intensity += vertex_intensity[i] * barycoord[i];
+            }
+            if (zbuffer[int(p.x + p.y * width)] < p.z) {
+                zbuffer[int(p.x + p.y * width)] = p.z;
+
+                TGAColor color = texture.get(int(pTexCoord.x * texture.get_width()), int(pTexCoord.y * texture.get_height()));
+                image.set(p.x, p.y, color * intensity);
+            }
+
+        }
+    }
+}
+

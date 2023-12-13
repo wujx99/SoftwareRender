@@ -31,5 +31,8 @@ public:
 	*/
 	static void Triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffer,
 		TGAImage& image, const std::array<Vec2f, 3>& texCoord, TGAImage& texture, float intensity = 1.0f);
+
+	static void Triangle(const std::array<Vec3f, 3>& pts, std::vector<float>& zbuffer,
+		TGAImage& image, const std::array<Vec2f, 3>& texCoord, TGAImage& texture, std::array<float, 3> vertex_intensity);
 };
 

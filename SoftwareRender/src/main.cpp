@@ -18,23 +18,7 @@
 
 #include "tests/TestGL.h"
 
-/*
-this function look at is from tutorial, I think is wrong!!!
-my function is GL::ULookAT.
-*/
-Matrix lookat(Vec3f eye, Vec3f center, Vec3f up) {
-    Vec3f z = (eye - center).normalize();
-    Vec3f x = cross(up , z).normalize();
-    Vec3f y = cross(z , x).normalize();
-    Matrix res = Matrix::identity();
-    for (int i = 0; i < 3; i++) {
-        res[0][i] = x[i];
-        res[1][i] = y[i];
-        res[2][i] = z[i];
-        res[i][3] = -center[i];
-    }
-    return res;
-}
+
 
 const TGAColor white = TGAColor(255, 255, 255, 255);
 const TGAColor red = TGAColor(255, 0, 0, 255);
@@ -70,21 +54,25 @@ int main(int argc, char** argv) {
     }
     {
         Matrix modelView = GL::ULookUp(center, eye, Vec3f(0, 1, 0));
-        Matrix modelView2 = lookat(eye, center, Vec3f(0, 1, 0));
         Matrix projection = Matrix::identity();
         Matrix viewPort = GL::ViewPort(width / 8, height / 8, width * 3 / 4, height * 3 / 4, depth);
         projection[3][2] = -1.f / (eye - center).norm();
 
         std::cerr << modelView << std::endl;
-        std::cerr << modelView2 << std::endl;
         std::cerr << projection << std::endl;
         std::cerr << viewPort << std::endl;
         Matrix z = (viewPort * projection * modelView);
         std::cerr << z << std::endl;
 
-        TGAImage texture;
+        /*TGAImage texture;
         texture.read_tga_file("textures/african_head_diffuse.tga");
-        texture.flip_vertically();
+        texture.flip_vertically();*/
+        
+        TGAImage texture(width, height, TGAImage::RGB);
+        for (int i = 0; i < width; i++)
+            for (int j = 0; j < height; j++)
+                texture.set(i, j, TGAColor(255, 255, 255));
+        
 
         TGAImage image(width, height, TGAImage::RGB);
         
@@ -95,12 +83,14 @@ int main(int argc, char** argv) {
             std::array<Vec3f, 3> screen_coords;
             std::array<Vec2f, 3> texture_coords;
             std::array<Vec3f, 3> world_coords;
+            std::array<float, 3> vertex_intensity;
             for (int j = 0; j < 3; j++) {
                 Vec3f v = model->vert(face[j].index);
                 Vec2f vt = model->texCoord(face[j].texCoordIndex);
+                Vec3f vn = model->nomal(face[j].nomalIndex);
                 world_coords[j] = v;
                 texture_coords[j] = vt;
-                
+                vertex_intensity[j] = vn.normalize() * light_dir;
                 auto temp = GL::V4f_to_V3f(viewPort * projection * modelView * GL::V3f_to_V4f(world_coords[j], 1.0f));
                 screen_coords[j] = { float(int(temp.x)), float(int(temp.y)), temp.z };  // today ,I spend most of my time to fix this bug!
 
@@ -115,7 +105,7 @@ int main(int argc, char** argv) {
             if (intensity > 0)
             {
                 drawCount++;
-                GL::Triangle(screen_coords, zbufferf, image, texture_coords, texture, intensity);
+                GL::Triangle(screen_coords, zbufferf, image, texture_coords, texture, vertex_intensity);
             }
             else
             {
@@ -126,7 +116,7 @@ int main(int argc, char** argv) {
         std::cout << "draw count :" << drawCount << "non draw count :" << nonDrawcount <<  std::endl;
 
         image.flip_vertically(); // i want to have the origin at the left bottom corner of the image
-        image.write_tga_file("outputs/my_camera.tga");
+        image.write_tga_file("outputs/Gouraudshading.tga");
     }
     {
         // dump zbuffer for debug
@@ -137,7 +127,7 @@ int main(int argc, char** argv) {
             }
         }
         zbimage.flip_vertically(); // i want to have the origin at the left bottom corner of the image
-        zbimage.write_tga_file("outputs/camera_zbufferf.tga");
+        zbimage.write_tga_file("outputs/GouraudshadingZbuffer.tga");
     }
     return 0;
 }
