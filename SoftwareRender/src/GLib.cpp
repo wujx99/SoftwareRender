@@ -1,10 +1,10 @@
 #include "GLib.h"
 #include "Tools.h"
 #include <array>
-void Shader::Triangle(int triIndex, Shader& shader, TGAImage& image, TGAImage& zBuffer)  
+void Shader::Triangle(int triIndex, TGAImage& image, TGAImage& zBuffer)  
 {
     const int width = image.get_width(), height = image.get_height();
-    std::array<Vec3f, 3> pts = { shader.Vertex(triIndex, 0), shader.Vertex(triIndex, 1), shader.Vertex(triIndex, 2) };
+    std::array<Vec3f, 3> pts = { Vertex(triIndex, 0), Vertex(triIndex, 1), Vertex(triIndex, 2) };
 
 
     Vec2f bboxmin(std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
@@ -21,14 +21,14 @@ void Shader::Triangle(int triIndex, Shader& shader, TGAImage& image, TGAImage& z
     float z = 0;
     for (p.x = bboxmin.x; p.x < bboxmax.x; p.x++) {
         for (p.y = bboxmin.y; p.y < bboxmax.y; p.y++) {
-            auto barycoord = Tools::BaryCentric(proj<2>(pts[0]), proj<2>(pts[1]), proj<2>(pts[2]), Vec2f(float(p.x), float(p.y)));//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////fromtheisiisisisisid
+            auto barycoord = Tools::BaryCentric(proj<2>(pts[0]), proj<2>(pts[1]), proj<2>(pts[2]), Vec2f(p.x, p.y));
             for (int i = 0; i < 3; i++)
             {
                 z += barycoord[i] * pts[i].z;
             }
             int frag_depth = std::max(0, std::min(255, int(z + .5)));
             if (barycoord.x < 0 || barycoord.y < 0 || barycoord.z < 0 || zBuffer.get(p.x, p.y)[0]>frag_depth) continue;
-            bool discard = shader.Fragment(barycoord, color);
+            bool discard = Fragment(barycoord, color);
             if (!discard) {
                 zBuffer.set(p.x, p.y, TGAColor(frag_depth));
                 image.set(p.x, p.y, color);

@@ -30,6 +30,13 @@ Matrix Tools::ViewPort(int x, int y, int w, int h, int depth) {
     return m;
 }
 
+Matrix Tools::Projection(float coeff)
+{
+    Matrix Projection = Matrix::identity();
+    Projection[3][2] = coeff;
+    return Projection;
+}
+
 Vec3f Tools::V4f_to_V3f(Vec4f v) {
     return { v[0] / v[3], v[1] / v[3],v[2] / v[3] };
 }
@@ -54,10 +61,10 @@ Matrix Tools::ULookUp(Vec3f center, Vec3f eye, Vec3f up)
 
     auto M_inv = M.invert();
     Matrix ret;
-    ret.set_col(0, GL::V3f_to_V4f(M_inv.col(0), 0));
-    ret.set_col(1, GL::V3f_to_V4f(M_inv.col(1), 0));
-    ret.set_col(2, GL::V3f_to_V4f(M_inv.col(2), 0));
-    ret.set_col(3, GL::V3f_to_V4f(center * -1, 1));
+    ret.set_col(0, V3f_to_V4f(M_inv.col(0), 0));
+    ret.set_col(1, V3f_to_V4f(M_inv.col(1), 0));
+    ret.set_col(2, V3f_to_V4f(M_inv.col(2), 0));
+    ret.set_col(3, V3f_to_V4f(center * -1, 1));
 
     return ret;
 }
