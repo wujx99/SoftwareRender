@@ -5,6 +5,7 @@
 #include "model.h"
 #include "geometry.h"
 #include "GL.h"
+#include "GLib.h"
 
 #include <algorithm>
 #include <iostream>
@@ -17,8 +18,22 @@
 #include <memory>
 
 #include "tests/TestGL.h"
+struct DrawOutput
+{
+    TGAImage drawedImage;
+    TGAImage zbuffer;
+};
+DrawOutput glDraw(int width, int height)
+{
+    TGAImage retImage(width, height, TGAImage::RGB);
+    TGAImage retZBuffer(width, height, TGAImage::GRAYSCALE);
 
-
+    int size = m_Context.IndexBuffer().size();
+    for (int i = 0; i < size; i++) {
+        Triangle(i, retImage, retZBuffer);
+    }
+    return { retImage, retZBuffer };
+}
 
 const TGAColor white = TGAColor(255, 255, 255, 255);
 const TGAColor red = TGAColor(255, 0, 0, 255);
@@ -128,6 +143,29 @@ int main(int argc, char** argv) {
         }
         zbimage.flip_vertically(); // i want to have the origin at the left bottom corner of the image
         zbimage.write_tga_file("outputs/GouraudshadingZbuffer.tga");
+    }
+
+    {
+        struct GouraudShader :public Shader
+        {
+
+
+
+
+
+            virtual Vec3f Vertex(int triIndex, int vertIndex) override
+            {
+                m_TriVertIntensity[vertIndex] = m_Context.Normal(m_Context.TriangleIndex(triIndex)[vertIndex]) * m_LightDir;
+                Vec3f gl_Vertex = m_Context.Vertex(m_Context.TriangleIndex(triIndex)[vertIndex]);
+                return V4f_to_V3f(m_ViewPort * m_Proj * m_Model * embed<4>(gl_Vertex));
+            }
+            virtual bool Fragment(Vec3f baryCoord, TGAColor& color) override
+            {
+                float intensity = m_TriVertIntensity * baryCoord;
+                color = TGAColor(255, 255, 255) * intensity;
+                return false;
+            }
+        }
     }
     return 0;
 }
