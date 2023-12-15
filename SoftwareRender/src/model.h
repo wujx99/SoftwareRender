@@ -17,7 +17,7 @@ private:
 	std::vector<Vec3f> verts_;
 	std::vector<Vec2f> texCoord_;
 	std::vector<Vec3f> nomal_;
-	std::vector<std::array<Index, 3>> faces_;
+	std::vector<FaceIndex> faces_;
 public:
 	Model(const char* filename);
 	~Model();

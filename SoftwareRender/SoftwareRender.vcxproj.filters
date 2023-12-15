@@ -15,6 +15,7 @@
       <Filter>tests</Filter>
     </ClInclude>
     <ClInclude Include="src\tgaimage.h" />
+    <ClInclude Include="src\GLib.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Log.cpp" />
@@ -25,5 +26,6 @@
       <Filter>tests</Filter>
     </ClCompile>
     <ClCompile Include="src\tgaimage.cpp" />
+    <ClCompile Include="src\GLib.cpp" />
   </ItemGroup>
 </Project>
