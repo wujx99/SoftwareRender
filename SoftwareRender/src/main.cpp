@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
             {
                 m_TriVertIntensity[vertIndex] = m_Context.Normal(m_Context.TriangleIndex(triIndex)[vertIndex]) *  m_LightDir;
                 Vec3f gl_Vertex = m_Context.Vertex(m_Context.TriangleIndex(triIndex)[vertIndex]);
-                return V4f_to_V3f( m_ViewPort * m_Proj * m_Model * embed<4>(gl_Vertex));
+                return V4f_to_V3f( m_ViewPort * m_Proj * m_View * m_Model * embed<4>(gl_Vertex));
             }
             virtual bool Fragment(Vec3f baryCoord, TGAColor& color) override
             {

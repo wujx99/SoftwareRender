@@ -16,6 +16,7 @@
     </ClInclude>
     <ClInclude Include="src\tgaimage.h" />
     <ClInclude Include="src\GLib.h" />
+    <ClInclude Include="src\Tools.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Log.cpp" />
@@ -27,5 +28,6 @@
     </ClCompile>
     <ClCompile Include="src\tgaimage.cpp" />
     <ClCompile Include="src\GLib.cpp" />
+    <ClCompile Include="src\Tools.cpp" />
   </ItemGroup>
 </Project>
